@@ -1,0 +1,8 @@
+.git
+.local-run
+**/__pycache__
+**/*.pyc
+.pytest_cache
+dbt_project/target
+dbt_project/dbt_packages
+dbt_project/logs
