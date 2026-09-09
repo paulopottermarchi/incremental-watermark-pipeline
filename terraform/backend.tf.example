@@ -1,0 +1,21 @@
+# terraform/backend.tf.example
+# ===========================================================================
+# Copy to backend.tf and fill in.
+#
+# Remote state is not optional here. Local state means the next person to
+# apply has no idea what exists, and two people applying from two laptops
+# will fight over the same jobs. The lock matters as much as the storage.
+#
+# State also records the shape of your infrastructure — job names, storage
+# paths, group names. Nothing catastrophic, but it belongs in encrypted,
+# access-controlled storage rather than in a repository or a home directory.
+# ===========================================================================
+
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "rg-data-platform"
+    storage_account_name = "stdataplatformtfstate"
+    container_name       = "tfstate"
+    key                  = "penetration-pipeline.tfstate"
+  }
+}
