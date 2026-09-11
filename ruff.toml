@@ -1,0 +1,38 @@
+# ruff.toml
+# ===========================================================================
+# Lint configuration.
+#
+# The rule set is deliberately narrow: syntax errors, undefined names,
+# unused imports, redefinitions. Things that are bugs, not style opinions.
+# A portfolio repository does not benefit from a linter that argues about
+# line length, and a noisy CI is one people learn to ignore.
+# ===========================================================================
+
+target-version = "py311"
+line-length = 100
+
+exclude = [".local-run", "dbt_project/target", "dbt_project/dbt_packages"]
+
+[lint]
+select = [
+    "E4",    # imports
+    "E7",    # statement-level errors
+    "E9",    # syntax / IO errors
+    "F",     # pyflakes: undefined names, unused imports, redefinitions
+    "B",     # bugbear: mutable defaults, unused loop vars, silent excepts
+    "I",     # import sorting
+]
+ignore = [
+    "B008",  # function call in default arg — not a pattern used here
+]
+
+[lint.per-file-ignores]
+# Databricks injects `spark`, `dbutils` and `display` into notebook scope.
+# They are genuinely undefined at import time and genuinely present at run
+# time; flagging them would train everyone to ignore F821 everywhere else.
+"notebooks/**" = ["F821", "E402"]
+# Both the notebooks and the local runner adjust sys.path before importing
+# from utils/, which is the entire reason the import follows the statement.
+"local/**" = ["E402"]
+"tests/**" = ["E402"]
+"conftest.py" = ["E402"]
