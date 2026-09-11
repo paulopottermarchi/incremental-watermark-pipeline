@@ -1,0 +1,27 @@
+# terraform/terraform.tfvars.example
+# Copy to terraform.tfvars and fill in. terraform.tfvars is gitignored.
+#
+# Authentication is NOT set here. Export it instead, so the token stays out
+# of both the repository and the state file:
+#
+#   export DATABRICKS_TOKEN=...
+#
+# Then: terraform init && terraform plan
+
+databricks_host = "https://adb-000000000000.0.azuredatabricks.net"
+environment     = "prod"
+
+repo_path  = "/Repos/data-eng/penetration-pipeline"
+delta_base = "dbfs:/mnt/penetration-pipeline"
+
+client_ids    = [101, 102, 103]
+attr_type_ids = [11, 12]
+
+alert_emails = ["data-eng-alerts@example.com"]
+
+# Leave schedules paused on the very first apply, run each job once by hand,
+# then set this to false.
+schedules_paused = true
+
+# manage_group = "data-engineering"
+# view_group   = "analytics"
