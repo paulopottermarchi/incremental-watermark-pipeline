@@ -1,0 +1,48 @@
+name: 'penetration_pipeline'
+version: '1.0.0'
+config-version: 2
+
+profile: 'penetration_pipeline'
+
+model-paths: ["models"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+# ---------------------------------------------------------------------------
+# Business codes live here rather than scattered across model SQL. Two
+# reasons: a code that changes in the source is a one-line edit, and the
+# repository stops carrying a hardcoded map of a client's internal
+# identifiers. The values below are illustrative.
+# ---------------------------------------------------------------------------
+vars:
+  client_ids: [101, 102, 103]
+
+  attr_type_provider: 11
+  attr_type_dpd: 12
+
+  disposition_answered: 201
+  disposition_no_answer: 202
+  disposition_failed: 203
+
+  status_paid: 1
+  status_ptp: [2, 3]
+  target_right_party: [1, 2]
+
+  system_contact_user: 'auto_dialer'
+  active_case_statute_id: 0
+
+  # Rolling reporting window, in whole months back from the current month.
+  window_months_back: 2
+
+  cleanup_min_total_calls: 5
+  cleanup_min_failed_calls: 6
+
+models:
+  penetration_pipeline:
+    staging:
+      +materialized: view
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: marts
+      +file_format: delta
