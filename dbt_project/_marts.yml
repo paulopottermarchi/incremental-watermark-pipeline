@@ -1,0 +1,67 @@
+# models/marts/_marts.yml
+version: 2
+
+models:
+  - name: mart_penetration_by_dpd_band
+    description: >
+      Dialer penetration by client x provider x DPD band over a rolling
+      window — the production deliverable this pipeline replaces, previously
+      a full-reload query. Includes Paid / PTP / right-party contact counts.
+    columns:
+      - name: penetration_rate
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+      - name: quantidade
+        data_tests: [not_null]
+      - name: sem_ac
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: dpd_faixa
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['A: 0-30', 'B: 31-60', 'C: 61-90', 'D: 91-180', 'E: 181-360', 'F: 361+', 'Sem DPD']
+      - name: paid
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range: {min_value: 0}
+      - name: ptp
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range: {min_value: 0}
+      - name: cc
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range: {min_value: 0}
+
+    data_tests:
+      # One row per segment, or the Power BI totals silently double.
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [client_id, provider, dpd_faixa]
+
+  - name: mart_phone_quality
+    description: >
+      Phone-level call quality signals used to flag telecom_ids for dialer
+      campaign cleanup, over the same rolling window as the penetration mart.
+    columns:
+      - name: pct_failed
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+      - name: pct_answered
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+      - name: is_cleanup_candidate
+        data_tests:
+          - accepted_values:
+              values: [0, 1]
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [client_id, case_id, telecom_id]
