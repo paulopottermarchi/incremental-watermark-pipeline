@@ -1,0 +1,51 @@
+# models/staging/_sources.yml
+# Source declarations and freshness only. Model-level tests live in
+# _staging.yml — mixing the two in one file made it unclear which layer a
+# failing test belonged to.
+#
+# No `database:` here on purpose. It was pinned to hive_metastore, which is
+# already what the Databricks profile sets as its catalog — and pinning it
+# meant the sources could not resolve anywhere else, including the local
+# Spark run in local/. The profile decides the catalog; the source declares
+# the schema.
+version: 2
+
+sources:
+  - name: bronze
+    schema: bronze
+    tables:
+      - name: cases
+        loaded_at_field: ingest_ts
+        freshness:
+          warn_after: {count: 26, period: hour}
+          error_after: {count: 48, period: hour}
+        columns:
+          - name: case_id
+            data_tests: [not_null]
+
+      - name: case_attributes
+        loaded_at_field: ingest_ts
+        freshness:
+          warn_after: {count: 26, period: hour}
+          error_after: {count: 48, period: hour}
+        columns:
+          - name: case_id
+            data_tests: [not_null]
+
+      - name: dialer
+        loaded_at_field: ingest_ts
+        freshness:
+          warn_after: {count: 26, period: hour}
+          error_after: {count: 48, period: hour}
+        columns:
+          - name: uniqueid
+            data_tests: [not_null]
+
+      - name: contacts
+        loaded_at_field: ingest_ts
+        freshness:
+          warn_after: {count: 26, period: hour}
+          error_after: {count: 48, period: hour}
+        columns:
+          - name: contact_id
+            data_tests: [not_null]
