@@ -1,0 +1,39 @@
+# models/staging/_staging.yml
+version: 2
+
+models:
+  - name: stg_cases
+    description: >
+      Latest known state per case, restricted to active cases for the
+      clients in scope. Deduplication here is what makes the Bronze overlap
+      re-read safe.
+    columns:
+      - name: case_id
+        data_tests: [unique, not_null]
+      - name: client_id
+        data_tests: [not_null]
+
+  - name: stg_case_attributes
+    description: >
+      case_attribute pivoted to one row per case, with provider and DPD as
+      columns.
+    columns:
+      - name: case_id
+        data_tests: [unique, not_null]
+
+  - name: stg_dialer
+    description: Deduplicated dialer calls with per-disposition flags.
+    columns:
+      - name: uniqueid
+        data_tests: [unique, not_null]
+      - name: case_id
+        data_tests: [not_null]
+
+  - name: stg_contacts
+    description: >
+      Deduplicated contact events, excluding system-generated contacts.
+    columns:
+      - name: contact_id
+        data_tests: [unique, not_null]
+      - name: case_id
+        data_tests: [not_null]
