@@ -1,0 +1,27 @@
+# local/profiles.yml
+# ===========================================================================
+# dbt profile for the local run.
+#
+# method: session runs dbt against a Spark session in-process, so the models
+# execute on the same engine and against the same Derby metastore the
+# ingestion step wrote its Bronze tables into. No Thrift server, no
+# Databricks workspace.
+#
+# The models themselves are unchanged between here and Databricks — this is
+# the only file that differs, which is the point.
+# ===========================================================================
+penetration_pipeline:
+  target: local
+  outputs:
+    local:
+      type: spark
+      method: session
+      host: localhost
+      schema: demo
+      threads: 1
+      server_side_parameters:
+        spark.sql.extensions: io.delta.sql.DeltaSparkSessionExtension
+        spark.sql.catalog.spark_catalog: org.apache.spark.sql.delta.catalog.DeltaCatalog
+        spark.sql.warehouse.dir: /workspace/.local-run/warehouse
+        javax.jdo.option.ConnectionURL: "jdbc:derby:;databaseName=/workspace/.local-run/metastore/metastore_db;create=true"
+        spark.sql.shuffle.partitions: "8"
