@@ -1,0 +1,10 @@
+# Local demo runtime. Kept separate from the root requirements.txt, which
+# targets Databricks: dbt-databricks and dbt-spark pin overlapping
+# dependencies and there is no reason to make one environment's constraints
+# the other's problem.
+pyspark==3.5.0
+delta-spark==3.1.0
+dbt-core==1.8.0
+dbt-spark[session]==1.8.0
+pytest==8.2.0
+pytest-cov==5.0.0
